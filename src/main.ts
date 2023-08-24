@@ -53,6 +53,7 @@ await crawler.run(startUrls);
 
 const results = {};
 const resultPatern = {
+  siteUrl: null,
   bestEmail: null,
   allEmails: [],
 };
@@ -60,16 +61,19 @@ const resultPatern = {
 const dataset = await Dataset.open('default');
 
 await dataset.forEach(async (item) => {
-  results[item.domain] = results[item.domain]
-    ? results[item.domain]
+  const domain = extractDomain(item.siteUrl);
+  results[domain] = results[domain]
+    ? results[domain]
     : Object.assign({}, resultPatern);
 
-  const resultObject = results[item.domain];
+  const resultObject = results[domain];
 
   resultObject.allEmails = [
     ...resultObject.allEmails,
     ...item.emails,
   ];
+
+  resultObject.siteUrl = new URL(item.siteUrl).hostname;
 });
 
 for (const [key, item] of Object.entries(results)) {
@@ -110,7 +114,7 @@ for (const [key, item] of Object.entries(results)) {
     try {
       seo = await axios.get('https://api.ranxplorer.com/v1/seo', {
         params: {
-          search: key,
+          search: item.siteUrl,
           limit: 1,
           sortby: 'Desc_Date',
         },
@@ -120,7 +124,7 @@ for (const [key, item] of Object.entries(results)) {
         'https://api.ranxplorer.com/v1/seo/competitors',
         {
           params: {
-            search: key,
+            search: item.siteUrl,
             limit: 1,
           },
         }

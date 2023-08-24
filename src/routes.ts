@@ -29,6 +29,7 @@ router.addDefaultHandler(async ({ enqueueLinks, log, request }) => {
       /cgv/,
       /legal/,
     ],
+    exclude: [/mailto\:/],
     label: 'detail',
   });
 });
@@ -51,7 +52,7 @@ router.addHandler('detail', async ({ request, page, log }) => {
   let emails = pageContent.match(emailPattern) || [];
 
   await Dataset.pushData({
-    domain: extractDomain(request.loadedUrl),
+    siteUrl: request.loadedUrl,
     emails,
   });
 });
