@@ -26,7 +26,7 @@ csvStream.pipe(writeStream);
 
 // Set the 'persistStateIntervalMillis' option
 // of global configuration to 10 seconds
-Configuration.getGlobalConfig().set('headless', false);
+// Configuration.getGlobalConfig().set('headless', false);
 
 axios.defaults.headers.common['X-Ranxplorer-Token'] =
   config.ranxplorerToken;
