@@ -9,3 +9,5 @@ storage
 
 config.json
 input.json
+
+*.csv
