@@ -36,7 +36,7 @@ router.addDefaultHandler(async ({ enqueueLinks, log, request }) => {
 
 router.addHandler('detail', async ({ request, page, log }) => {
   const emailPattern =
-    /\b[A-Za-z0-9._%+-]+(?:@(?!\dx)|\[at\])[A-Za-z0-9.-]+(?:\.|\[dot\])[A-Za-z]{2,}\b/gm;
+    /\b[A-Za-z0-9._%+-]+(?:@(?!\d*x)|\[at\])[A-Za-z0-9.-]+(?:\.|\[dot\])[A-Za-z]{2,}\b/gm;
 
   // Weak detection of adult consent for woocommerce sites
   let consentButtons = await page.getByRole('button', {
