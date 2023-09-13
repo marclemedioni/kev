@@ -8,3 +8,7 @@ crawlee_storage
 storage
 
 config.json
+
+input/scrapper.json
+input/index-checker.json
+output/*

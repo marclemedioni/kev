@@ -113,7 +113,7 @@ for (const [key, item] of Object.entries(results)) {
     ),
   };
 
-  if (this.userConfig.ranxplorerToken) {
+  if (config.ranxplorerToken) {
     let seo;
     let competitor;
 
