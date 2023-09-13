@@ -13,16 +13,14 @@
     },
     "devDependencies": {
         "@apify/tsconfig": "^0.1.0",
+        "@types/lodash": "^4.14.198",
         "@types/node": "^18.0.0",
         "ts-node": "^10.8.0",
         "typescript": "^5.0.0"
     },
     "scripts": {
-        "start": "npm run start:dev",
-        "start:prod": "node dist/src/main.js",
-        "start:dev": "ts-node-esm -T src/main.ts",
-        "build": "tsc",
-        "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1"
+        "start:scrap": "ts-node-esm -T src/scrapper/main.ts",
+        "start:index-checker": "ts-node-esm -T src/index-checker/main.ts"
     },
     "author": "It's not you it's me",
     "license": "ISC"

@@ -1,11 +1,4 @@
-// For more information, see https://crawlee.dev/
-import {
-  Configuration,
-  Dataset,
-  PlaywrightCrawler,
-  ProxyConfiguration,
-} from 'crawlee';
-import log from '@apify/log';
+import { Dataset, PlaywrightCrawler } from 'crawlee';
 import _ from 'lodash';
 import axios from 'axios';
 import extractDomain from 'extract-domain';
@@ -14,19 +7,16 @@ import csv from 'fast-csv';
 
 import { router } from './routes.js';
 
-import config from '../config.json' assert { type: 'json' };
-import startUrls from '../input.json' assert { type: 'json' };
+import config from '../../config.json' assert { type: 'json' };
+import startUrls from '../../input/scrapper.json' assert { type: 'json' };
 
 const now = new Date();
-const filename = `${now.getDate()}-${now.getMonth()}-${now.getFullYear()} ${now.getHours()}-${now.getMinutes()}_output.csv`;
+const filename = `output/${now.getDate()}-${now.getMonth()}-${now.getFullYear()} ${now.getHours()}-${now.getMinutes()}_output.csv`;
 
 const csvStream = csv.format({ headers: true });
 const writeStream = fs.createWriteStream(filename);
-csvStream.pipe(writeStream);
 
-// Set the 'persistStateIntervalMillis' option
-// of global configuration to 10 seconds
-// Configuration.getGlobalConfig().set('headless', false);
+csvStream.pipe(writeStream);
 
 axios.defaults.headers.common['X-Ranxplorer-Token'] =
   config.ranxplorerToken;
@@ -51,17 +41,22 @@ const crawler = new PlaywrightCrawler({
 
 await crawler.run(startUrls);
 
-const results = {};
-const resultPatern = {
+const resultPatern: {
+  siteUrl: string | null;
+  bestEmail: string | null;
+  allEmails: string[];
+} = {
   siteUrl: null,
   bestEmail: null,
   allEmails: [],
 };
+const results: { [key: string]: typeof resultPatern } = {};
 
 const dataset = await Dataset.open('default');
 
 await dataset.forEach(async (item) => {
-  const domain = extractDomain(item.siteUrl);
+  const domain = extractDomain(item.siteUrl) as string;
+
   results[domain] = results[domain]
     ? results[domain]
     : Object.assign({}, resultPatern);
@@ -79,7 +74,7 @@ await dataset.forEach(async (item) => {
 for (const [key, item] of Object.entries(results)) {
   item.allEmails = _.filter(
     item.allEmails,
-    (email) => email.search('sentry') === -1
+    (email: string) => email.search('sentry') === -1
   );
   item.allEmails = _.uniq(item.allEmails);
 
@@ -91,13 +86,24 @@ for (const [key, item] of Object.entries(results)) {
 
       return email.search(key) > -1
         ? email
-        : email.search(/gmail|contact\@/) > -1
+        : email.search(/gmail|contact@/) > -1
         ? email
-        : null;
-    }, null) ||
-    _.head(_(item.allEmails).countBy().entries().maxBy(_.last));
+        : '';
+    }, '') ||
+    (_.head(
+      _(item.allEmails).countBy().entries().maxBy(_.last)
+    ) as string);
 
-  let csvResult = {
+  let csvResult: {
+    domain: string;
+    contactEmail: string | undefined;
+    emails: string[];
+    estimatedTraffic?: number;
+    estimatedKeywords?: number;
+    competitorUrl?: string;
+    competitorEstimatedTraffic?: number;
+    competitorKeywords?: number;
+  } = {
     domain: key,
     contactEmail: item.bestEmail
       ?.replace('[at]', '@')
@@ -107,7 +113,7 @@ for (const [key, item] of Object.entries(results)) {
     ),
   };
 
-  if (config.ranxplorerToken) {
+  if (this.userConfig.ranxplorerToken) {
     let seo;
     let competitor;
 
@@ -131,13 +137,13 @@ for (const [key, item] of Object.entries(results)) {
       );
 
       if (seo.data.errors) {
-        log.error(
+        console.error(
           `Impossible de récupérer les données SEO: ${seo.data.message}`
         );
       }
 
       if (competitor.data.errors) {
-        log.error(
+        console.error(
           `Impossible de récupérer les données compétiteur: ${competitor.data.message}`
         );
       }
@@ -161,8 +167,8 @@ for (const [key, item] of Object.entries(results)) {
           competitor.data.data[0] &&
           competitor.data.data[0].Nbkw,
       };
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
 
     csvStream.write(csvResult);

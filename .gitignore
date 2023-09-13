@@ -8,6 +8,3 @@ crawlee_storage
 storage
 
 config.json
-input.json
-
-*.csv
