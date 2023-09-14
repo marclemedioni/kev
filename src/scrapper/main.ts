@@ -11,7 +11,7 @@ import config from '../../config.json' assert { type: 'json' };
 import startUrls from '../../input/scrapper.json' assert { type: 'json' };
 
 const now = new Date();
-const filename = `output/scrapper_${now.getDate()}-${now.getMonth()}-${now.getFullYear()} ${now.getHours()}-${now.getMinutes()}.csv`;
+const filename = `output/scrapper/${now.getDate()}-${now.getMonth()}-${now.getFullYear()} ${now.getHours()}-${now.getMinutes()}.csv`;
 
 const csvStream = csv.format({ headers: true });
 const writeStream = fs.createWriteStream(filename);
