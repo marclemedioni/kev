@@ -5,14 +5,19 @@
     "description": "This is an example of a Crawlee project.",
     "dependencies": {
         "axios": "^1.4.0",
+        "bluebird": "^3.7.2",
         "crawlee": "^3.0.0",
         "extract-domain": "^4.1.0",
         "fast-csv": "^4.3.6",
         "lodash": "^4.17.21",
-        "playwright": "*"
+        "playwright": "*",
+        "serp": "^2.2.2",
+        "shuffle-array": "^1.0.1",
+        "simple-proxies": "^1.1.0"
     },
     "devDependencies": {
         "@apify/tsconfig": "^0.1.0",
+        "@types/bluebird": "^3.5.38",
         "@types/lodash": "^4.14.198",
         "@types/node": "^18.0.0",
         "ts-node": "^10.8.0",
