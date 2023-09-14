@@ -21,8 +21,7 @@ const proxyList = await proxyLoader.loadProxyFile(config);
 
 const sitesToCheck = (await readFile('./input/index-checker.txt'))
   .toString()
-  .split('\n')
-  .map((site) => extractDomain(site));
+  .split('\n');
 
 for (let site of sitesToCheck) {
   const numberOfResults = await serp.search({
