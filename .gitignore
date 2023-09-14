@@ -12,3 +12,6 @@ proxies.txt
 
 input/scrapper.json
 input/index-checker.txt
+
+output/scrapper/*
+output/index-checker/*
