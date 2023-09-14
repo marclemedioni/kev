@@ -1,7 +1,15 @@
 import serp from 'serp';
+import axios from 'axios';
+import { load } from 'cheerio';
 import * as proxyLoader from '../helpers/proxy/proxyfileloader.js';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import extractDomain from 'extract-domain';
+
+const response = await axios.get(
+  'https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt'
+);
+
+await writeFile('proxies.txt', response.data);
 
 const config = proxyLoader
   .config()
